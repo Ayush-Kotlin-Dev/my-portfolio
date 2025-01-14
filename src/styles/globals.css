@@ -1,0 +1,23 @@
+/* Add these styles */
+.material-ripple {
+  position: relative;
+  overflow: hidden;
+}
+
+.material-ripple::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  transform: scale(0);
+  animation: ripple 1s linear;
+}
+
+@keyframes ripple {
+  to {
+    transform: scale(4);
+    opacity: 0;
+  }
+}

@@ -7,6 +7,8 @@ const Portfolio = () => {
   const [rotation, setRotation] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+  const [androidRotation, setAndroidRotation] = useState(0);
+  const [androidPosition, setAndroidPosition] = useState({ x: 0, y: 0 });
 
   // Check device and motion preferences
   useEffect(() => {
@@ -31,6 +33,16 @@ const Portfolio = () => {
     }
   }, [isMobile]);
 
+  const handleAndroidAnimations = useCallback(() => {
+    if (!isMobile) {
+      setAndroidRotation(scrollY * 0.2);
+      setAndroidPosition({
+        x: Math.sin(scrollY * 0.002) * 50,
+        y: Math.cos(scrollY * 0.002) * 50
+      });
+    }
+  }, [scrollY, isMobile]);
+
   useEffect(() => {
     if (prefersReducedMotion) return;
     
@@ -39,6 +51,7 @@ const Portfolio = () => {
       if (!ticking) {
         window.requestAnimationFrame(() => {
           handleScroll();
+          handleAndroidAnimations();
           ticking = false;
         });
         ticking = true;
@@ -47,7 +60,7 @@ const Portfolio = () => {
 
     window.addEventListener('scroll', scrollListener, { passive: true });
     return () => window.removeEventListener('scroll', scrollListener);
-  }, [handleScroll, prefersReducedMotion]);
+  }, [handleScroll, handleAndroidAnimations, prefersReducedMotion]);
 
   // Animation styles based on device
   const getAnimationStyle = (baseStyle) => {
@@ -94,8 +107,53 @@ const Portfolio = () => {
     }
   };
 
+  const AndroidElements = () => (
+    <div className="fixed inset-0 pointer-events-none overflow-hidden">
+      <div 
+        className="android-mascot fixed w-20 h-20"
+        style={{
+          right: '10%',
+          top: '20%',
+          transform: `
+            translate(${androidPosition.x}px, ${androidPosition.y}px)
+            rotate(${androidRotation}deg)
+          `,
+          transition: 'transform 0.1s ease-out',
+          willChange: 'transform'
+        }}
+      >
+        <div className="relative w-full h-full">
+          <div className="absolute inset-0 bg-[#3DDC84] rounded-t-full">
+            <div className="android-eyes flex justify-center space-x-4 mt-6">
+              <div className="w-2 h-2 bg-white rounded-full" />
+              <div className="w-2 h-2 bg-white rounded-full" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* API Level Indicators */}
+      {[31, 33, 34].map((level, index) => (
+        <div
+          key={level}
+          className="fixed px-2 py-1 bg-[#3DDC84] rounded-full text-xs text-black font-mono"
+          style={{
+            right: `${5 + index * 10}%`,
+            top: `${40 + index * 8}%`,
+            transform: `translateY(${scrollY * 0.1}px)`,
+            opacity: 0.7,
+            transition: 'transform 0.1s ease-out',
+          }}
+        >
+          API {level}
+        </div>
+      ))}
+    </div>
+  );
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-blue-900 text-white">
+      {!prefersReducedMotion && <AndroidElements />}
       {/* Navigation */}
       <nav className="fixed w-full z-50 bg-opacity-90 bg-gray-900 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-4 py-3">
