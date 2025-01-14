@@ -1,19 +1,70 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Github, Linkedin, Mail, Star, Moon, MenuIcon, X, Briefcase, GraduationCap, Code, Sun, Cloud, Circle } from 'lucide-react';
 
 const Portfolio = () => {
   const [scrollY, setScrollY] = useState(0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [rotation, setRotation] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+
+  // Check device and motion preferences
+  useEffect(() => {
+    setIsMobile(window.innerWidth <= 768);
+    setPrefersReducedMotion(window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Optimized scroll handler with throttling
+  const handleScroll = useCallback(() => {
+    if (!window.requestAnimationFrame) {
+      setScrollY(window.scrollY);
+      setRotation(window.scrollY * (isMobile ? 0.05 : 0.1));
+    } else {
+      requestAnimationFrame(() => {
+        setScrollY(window.scrollY);
+        setRotation(window.scrollY * (isMobile ? 0.05 : 0.1));
+      });
+    }
+  }, [isMobile]);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrollY(window.scrollY);
-      setRotation(window.scrollY * 0.1);
+    if (prefersReducedMotion) return;
+    
+    let ticking = false;
+    const scrollListener = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          handleScroll();
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+
+    window.addEventListener('scroll', scrollListener, { passive: true });
+    return () => window.removeEventListener('scroll', scrollListener);
+  }, [handleScroll, prefersReducedMotion]);
+
+  // Animation styles based on device
+  const getAnimationStyle = (baseStyle) => {
+    if (prefersReducedMotion || isMobile) {
+      return {
+        ...baseStyle,
+        transform: 'none',
+        transition: 'none',
+        willChange: 'transform',
+        opacity: 0.5,
+      };
+    }
+    return {
+      ...baseStyle,
+      willChange: 'transform',
+    };
+  };
 
   const projects = [
     {
@@ -346,11 +397,5 @@ const Portfolio = () => {
     </div>
   );
 };
-const scrollToSection = (elementId) => {
-  const element = document.getElementById(elementId);
-  if (element) {
-    element.scrollIntoView({ behavior: 'smooth' });
-    setIsMenuOpen(false);
-  }
-};
+
 export default Portfolio;
