@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Github, Linkedin, Mail, Star, Moon, MenuIcon, X, Briefcase, GraduationCap, Code } from 'lucide-react';
+import { Github, Linkedin, Mail, Star, Moon, MenuIcon, X, Briefcase, GraduationCap, Code, Sun, Cloud, Circle } from 'lucide-react';
 
 const Portfolio = () => {
   const [scrollY, setScrollY] = useState(0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [rotation, setRotation] = useState(0);
 
   useEffect(() => {
     const handleScroll = () => {
       setScrollY(window.scrollY);
+      setRotation(window.scrollY * 0.1);
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
@@ -268,6 +270,79 @@ const Portfolio = () => {
           transform: `translate(${-scrollY * 0.3}px, ${scrollY * 0.4}px)`,
         }}
       />
+      <div className="fixed inset-0 pointer-events-none">
+        {/* Planets and Stars */}
+        <Sun 
+          className="fixed text-yellow-500 opacity-30"
+          style={{
+            top: '15%',
+            right: '15%',
+            transform: `rotate(${rotation}deg) translate(${-scrollY * 0.4}px, ${scrollY * 0.2}px)`,
+            width: '80px',
+            height: '80px',
+          }}
+        />
+        
+        <Circle 
+          className="fixed text-purple-400 opacity-20"
+          style={{
+            top: '40%',
+            left: '10%',
+            transform: `rotate(${-rotation}deg) translate(${scrollY * 0.3}px, ${scrollY * 0.1}px)`,
+            width: '120px',
+            height: '120px',
+          }}
+        />
+
+        <Cloud 
+          className="fixed text-blue-300 opacity-20"
+          style={{
+            top: '60%',
+            right: '20%',
+            transform: `rotate(${rotation * 0.5}deg) translate(${-scrollY * 0.2}px, ${-scrollY * 0.3}px)`,
+            width: '100px',
+            height: '100px',
+          }}
+        />
+
+        {/* Shooting Stars */}
+        <div 
+          className="fixed w-1 h-20 bg-gradient-to-b from-white to-transparent"
+          style={{
+            top: '10%',
+            left: `${30 + Math.sin(scrollY * 0.01) * 20}%`,
+            transform: `rotate(45deg) translateX(${scrollY * 0.5}px)`,
+          }}
+        />
+        
+        <div 
+          className="fixed w-1 h-16 bg-gradient-to-b from-white to-transparent"
+          style={{
+            top: '20%',
+            right: `${20 + Math.cos(scrollY * 0.01) * 20}%`,
+            transform: `rotate(-45deg) translateX(${-scrollY * 0.3}px)`,
+          }}
+        />
+
+        {/* Color Orbs */}
+        <div 
+          className="fixed w-64 h-64 rounded-full bg-gradient-to-r from-pink-500 to-purple-500 opacity-10 blur-3xl"
+          style={{
+            top: '70%',
+            left: '60%',
+            transform: `translate(${scrollY * -0.1}px, ${-scrollY * 0.2}px) scale(${1 + scrollY * 0.001})`,
+          }}
+        />
+        
+        <div 
+          className="fixed w-96 h-96 rounded-full bg-gradient-to-r from-blue-500 to-green-500 opacity-10 blur-3xl"
+          style={{
+            top: '30%',
+            left: '40%',
+            transform: `translate(${scrollY * 0.15}px, ${scrollY * 0.1}px) scale(${1 + scrollY * 0.0005})`,
+          }}
+        />
+      </div>
     </div>
   );
 };
