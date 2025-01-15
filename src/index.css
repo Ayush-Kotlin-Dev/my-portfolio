@@ -2,9 +2,24 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer utilities {
+  .bg-android {
+    background-color: #3DDC84;
+  }
+  
+  .text-kotlin {
+    color: #B125EA;
+  }
+}
+
 @keyframes float {
-  0%, 100% { transform: translateY(0px); }
+  0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-20px); }
+}
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 .android-eyes div {

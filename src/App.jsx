@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Github, Linkedin, Mail, Star, Moon, MenuIcon, X, Briefcase, GraduationCap, Code, Sun, Cloud, Circle } from 'lucide-react';
+import { Github, Linkedin, Mail, Star, Moon, MenuIcon, X, Briefcase, GraduationCap, Code, Sun, Cloud, Circle, Terminal, Coffee, Bug } from 'lucide-react';
 
 const Portfolio = () => {
   const [scrollY, setScrollY] = useState(0);
@@ -147,6 +147,38 @@ const Portfolio = () => {
         >
           API {level}
         </div>
+      ))}
+
+      {/* Code Snippets */}
+      <div className="code-container fixed left-[5%] top-[40%]">
+        <pre 
+          className="text-xs font-mono bg-black/20 p-4 rounded-lg backdrop-blur-sm"
+          style={{
+            transform: `translateY(${scrollY * 0.2}px)`,
+            opacity: 0.7,
+          }}
+        >
+          <code className="block text-green-400">fun main() {`{`}</code>
+          <code className="block text-blue-400 ml-4">launch {`{`}</code>
+          <code className="block text-purple-400 ml-8">Flow.collect {`{`}</code>
+          <code className="block text-orange-400 ml-12">Compose()</code>
+          <code className="block text-purple-400 ml-8">{`}`}</code>
+          <code className="block text-blue-400 ml-4">{`}`}</code>
+          <code className="block text-green-400">{`}`}</code>
+        </pre>
+      </div>
+
+      {/* Developer Icons */}
+      {[Terminal, Coffee, Bug].map((Icon, index) => (
+        <Icon
+          key={index}
+          className="fixed text-white/20 w-6 h-6 transition-transform duration-300"
+          style={{
+            left: `${20 + index * 15}%`,
+            bottom: '10%',
+            transform: `rotate(${scrollY * 0.1}deg)`,
+          }}
+        />
       ))}
     </div>
   );
